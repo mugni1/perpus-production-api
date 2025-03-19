@@ -14,7 +14,7 @@ class TransactionController extends Controller
     }
 
     public function index(){
-        $result = Transaction::orderBy("id", "DESC")->all();
+        $result = Transaction::orderBy("id", "DESC")->get();
         return TransactionResource::collection($result);
     }
 
