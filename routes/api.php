@@ -60,9 +60,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get("/borrowings-borrow-count", [BorrowingController::class, 'borrowCount'])->middleware(ThisForSuperUser::class);
     Route::get("/borrowings-return-count", [BorrowingController::class, 'returnCount'])->middleware(ThisForSuperUser::class);
     Route::get("/borrowings-late-count", [BorrowingController::class, 'lateCount'])->middleware(ThisForSuperUser::class);
+
     Route::get("/borrowings-borrow-user", [BorrowingController::class, 'borrowUser']); // list semua Buku yang di pinjam si anggota tertentu yang telah login dengan akunnya
     Route::get("/borrowings-return-user", [BorrowingController::class, 'returnUser']); // list semua Buku yang di kembalikan si anggota tertentu yang telah login dengan akunnya
+
     Route::get("/borrowings", [BorrowingController::class, 'index'])->middleware(ThisForSuperUser::class); // list semua buku yang di pinjam semua user
+    Route::get("/borrowings/{id}", [BorrowingController::class, 'show']); // show detail
 
     Route::get("/borrowings-borrow", [BorrowingController::class, 'borrowList'])->middleware((ThisForSuperUser::class)); // tampikan list buku yg di pinjam saja
     Route::get("/borrowings-return", [BorrowingController::class, 'returnList'])->middleware((ThisForSuperUser::class)); // tampikan list buku yg di kembalikan saja
@@ -75,6 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/transactions-count',[TransactionController::class, 'count'])->middleware(ThisForSuperUser::class);
     Route::get('/transactions',[TransactionController::class, 'index'])->middleware(ThisForSuperUser::class);
     Route::get('/transactions/{id}', [TransactionController::class, 'show'])->middleware(ThisForSuperUser::class);
+
     Route::get('/transactions-borrow',[TransactionController::class, 'trasnBorrow'])->middleware(ThisForSuperUser::class);
     Route::get('/transactions-return',[TransactionController::class, 'transReturn'])->middleware(ThisForSuperUser::class);
     Route::get('/transactions-fine',[TransactionController::class, 'transFine'])->middleware(ThisForSuperUser::class);

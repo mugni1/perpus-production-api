@@ -8,6 +8,7 @@ use App\Models\Borrowing;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Resources\BorrowingResource;
+use App\Http\Resources\BorrowResource;
 use Illuminate\Support\Facades\Auth;
 
 class BorrowingController extends Controller
@@ -27,23 +28,42 @@ class BorrowingController extends Controller
 
     public function index(){
         $borrowings = Borrowing::all();
-        // return jika stock buku kosong
         return BorrowingResource::collection($borrowings);
+    }
+
+    public function show($id){
+        $borrowing = Borrowing::findOrFail($id);
+        return new BorrowingResource($borrowing);
     }
 
     public function borrowList(){
-        $borrowings = Borrowing::orderBy('id', 'DESC')->where('status','dipinjam')->get();
-        return BorrowingResource::collection($borrowings);
+        $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
+            ->select('id', 'user_id', 'book_id', 'borrow_date', 'return_date', 'status', 'daily_fine')
+            ->orderBy('created_at', 'DESC')
+            ->where('status', 'dipinjam')
+            ->simplePaginate(15);
+            return response(['data'=>$borrowings]);
+        // return BorrowResource::collection($borrowings);
     }
 
     public function returnList(){
-        $borrowings = Borrowing::orderBy('id', 'DESC')->where('status','dikembalikan')->get();
-        return BorrowingResource::collection($borrowings);
+        $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
+        ->select('id', 'user_id', 'book_id', 'borrow_date', 'actual_return_date', 'status', 'daily_fine')
+        ->orderBy('updated_at', 'DESC')
+        ->where('status','dikembalikan')
+        ->simplePaginate(15);
+        return response(['data'=>$borrowings]);
+        // return BorrowingResource::collection($borrowings);
     }
 
     public function lateList(){
-        $borrowings = Borrowing::orderBy('id', 'DESC')->where('status','terlambat')->get();
-        return BorrowingResource::collection($borrowings);
+        $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
+        ->select('id', 'user_id', 'book_id','borrow_date','return_date', 'actual_return_date', 'status')
+        ->orderBy('updated_at', 'DESC')
+        ->where('status','terlambat')
+        ->simplePaginate(15);
+        return response(['data'=>$borrowings]);
+        // return BorrowingResource::collection($borrowings);
     }
 
     public function borrowBook(Request $request) {
@@ -138,13 +158,13 @@ class BorrowingController extends Controller
         return response(['message'=>'Success return the book, Nice']);
     }
 
-     //////////// BUKU YG DI PINJAM USER //////////////////
+    //////////// BUKU YG DI PINJAM USER //////////////////
     public function borrowUser(){
         $user = Auth::user()->id;
         $borrowing = Borrowing::orderBy('id', 'DESC')->where('user_id',$user)->where('status', 'dipinjam')->get();
         return BorrowingResource::collection($borrowing);
     }
-
+    ////////// BUKU YG DI KEMBALIKAN USER ///////////////
     public function returnUser(){
         $user = Auth::user()->id;
         $borrowing = Borrowing::orderBy('id', 'DESC')->where('user_id', $user)->whereIn('status', ['dikembalikan', 'terlambat'])->get();

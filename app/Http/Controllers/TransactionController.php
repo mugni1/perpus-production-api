@@ -14,8 +14,16 @@ class TransactionController extends Controller
     }
 
     public function index(){
-        $result = Transaction::orderBy("id", "DESC")->get();
-        return TransactionResource::collection($result);
+        $result = Transaction::select('id', 'borrowing_id', 'transaction_type', 'amount', 'created_at')
+        ->orderByDesc("created_at")
+        ->with([
+            'borrowings:id,user_id,book_id',
+            'borrowings.books:id,title',
+            'borrowings.users:id,username'
+        ])
+        ->simplePaginate(15);
+        // return TransactionResource::collection($result);
+        return response(['data'=>$result]);
     }
 
     public function show($id){
@@ -26,17 +34,44 @@ class TransactionController extends Controller
     }
 
     public function trasnBorrow(){
-        $result = Transaction::orderBy("id", "DESC")->where('transaction_type', 'peminjaman')->get();
-        return TransactionResource::collection($result);
+        $result = Transaction::select('id', 'borrowing_id', 'transaction_type', 'amount', 'created_at')
+        ->orderByDesc("created_at")
+        ->where('transaction_type', 'peminjaman')
+        ->with([
+            'borrowings:id,user_id,book_id',
+            'borrowings.books:id,title',
+            'borrowings.users:id,username'
+        ])
+        ->simplePaginate(15);
+        // return TransactionResource::collection($result);
+        return response(['data'=>$result]);
     }
 
     public function transReturn(){
-        $result = Transaction::orderBy("id", "DESC")->where('transaction_type', 'pengembalian')->get();
-        return TransactionResource::collection($result);
+        $result = Transaction::select('id', 'borrowing_id', 'transaction_type', 'amount', 'created_at')
+        ->orderByDesc("created_at")
+        ->where('transaction_type', 'pengembalian')
+        ->with([
+            'borrowings:id,user_id,book_id',
+            'borrowings.books:id,title',
+            'borrowings.users:id,username'
+        ])
+        ->simplePaginate(15);
+        // return TransactionResource::collection($result);
+        return response(['data'=>$result]);
     }
 
     public function transFine(){
-        $result = Transaction::orderBy("id", "DESC")->where('transaction_type', 'denda')->get();
-        return TransactionResource::collection($result);
+        $result = Transaction::select('id', 'borrowing_id', 'transaction_type', 'amount', 'created_at')
+        ->orderByDesc("created_at")
+        ->where('transaction_type', 'denda')
+        ->with([
+            'borrowings:id,user_id,book_id',
+            'borrowings.books:id,title',
+            'borrowings.users:id,username'
+        ])
+        ->simplePaginate(15);
+        // return TransactionResource::collection($result);
+        return response(['data'=>$result]);
     }
 }
