@@ -141,7 +141,7 @@ class BorrowingController extends Controller
                 'transaction_type' => 'denda',
                 'amount' => $totalFine,
             ]);
-            return response(['message'=>'Success return the book and pay the fine']);
+            return response(['message'=>'Berhasil Mengembalikan buku, Harus membayar denda Rp' . $totalFine]);
         }
         $book->update([
             'stock' => $book['stock'] + 1,
@@ -155,7 +155,7 @@ class BorrowingController extends Controller
             'transaction_type' => 'pengembalian',
             'amount' => 0,
         ]);
-        return response(['message'=>'Success return the book, Nice']);
+        return response(['message'=>'Berhasil Mengembalikan buku tepat waktu, Mantap!']);
     }
 
     //////////// BUKU YG DI PINJAM USER //////////////////
