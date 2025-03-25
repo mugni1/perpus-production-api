@@ -122,7 +122,7 @@ class BorrowingController extends Controller
 
         // Pastikan return_date dalam format tanggal Carbon
         $return_date = Carbon::parse($borrowing->return_date); //parse dulu agar bisa di cek
-        $delayDays =ceil($return_date->diffInHours($date_now) / 24); //bulatkan dalam satu hari penuh
+        $delayDays = floor($return_date->diffInHours($date_now) / 24); //bulatkan dalam satu hari penuh
 
         // jika terdeteksi terlambat
         if($delayDays > 0){
