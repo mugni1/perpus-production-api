@@ -82,4 +82,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/transactions-borrow',[TransactionController::class, 'trasnBorrow'])->middleware(ThisForSuperUser::class);
     Route::get('/transactions-return',[TransactionController::class, 'transReturn'])->middleware(ThisForSuperUser::class);
     Route::get('/transactions-fine',[TransactionController::class, 'transFine'])->middleware(ThisForSuperUser::class);
+
+    Route::get('/transactions-borrow-data', [TransactionController::class, 'transBorrowDate'])->middleware(ThisForSuperUser::class);
+    Route::get('/transactions-return-data', [TransactionController::class, 'transReturnDate'])->middleware(ThisForSuperUser::class);
+    Route::get('/transactions-fine-data', [TransactionController::class, 'transFineDate'])->middleware(ThisForSuperUser::class);
 });

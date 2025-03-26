@@ -74,4 +74,67 @@ class TransactionController extends Controller
         // return TransactionResource::collection($result);
         return response(['data'=>$result]);
     }
+
+    public function transBorrowDate(Request $request){
+         $year = now()->year;
+         if($request['year']){
+            $year = $request['year'];
+         }
+
+         $result = Transaction::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+         ->whereYear('created_at', $year)
+         ->where('transaction_type', 'peminjaman')
+         ->groupBy('month')
+         ->orderBy('month')
+         ->pluck('count', 'month');
+
+         $chartData = [];
+         for ($i = 1; $i <= 12; $i++) {
+            $chartData[] = ["peminjaman" => $result[$i] ?? 0];
+         }
+
+         return $chartData;
+    }
+
+    public function transReturnDate(Request $request){
+        $year = now()->year;
+        if($request['year']){
+           $year = $request['year'];
+        }
+
+        $result = Transaction::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+        ->whereYear('created_at', $year)
+        ->where('transaction_type', 'pengembalian')
+        ->groupBy('month')
+        ->orderBy('month')
+        ->pluck('count', 'month');
+
+        $chartData = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $chartData[] = ["pengembalian" => $result[$i] ?? 0];
+        }
+
+        return $chartData;
+   }
+
+   public function transFineDate(Request $request){
+    $year = now()->year;
+    if($request['year']){
+       $year = $request['year'];
+    }
+
+    $result = Transaction::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+    ->whereYear('created_at', $year)
+    ->where('transaction_type', 'denda')
+    ->groupBy('month')
+    ->orderBy('month')
+    ->pluck('count', 'month');
+
+    $chartData = [];
+    for ($i = 1; $i <= 12; $i++) {
+        $chartData[] = ["denda" => $result[$i] ?? 0];
+    }
+
+    return $chartData;
+}
 }
