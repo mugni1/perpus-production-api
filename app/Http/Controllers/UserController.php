@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
-use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -20,7 +19,7 @@ class UserController extends Controller
         return response(['count'=>$results]);
     }
     public function user(){
-        $user = User::where('role_id', 2)->get();
+        $user = User::where('role_id', 2)->simplePaginate(20);
         return UserResource::collection($user);
     }
 
