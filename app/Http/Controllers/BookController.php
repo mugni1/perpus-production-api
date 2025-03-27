@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class BookController extends Controller
 {
     public function index(){
-        $books = Book::all();
+        $books = Book::simplePaginate(20);
         return BookResouce::collection($books);
     }
 
