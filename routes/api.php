@@ -11,9 +11,6 @@ use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Middleware\ThisForSuperUser;
 
-Route::get('/', function(){
-    return response(['message'=>'ngapain bang']);
-});
 
 // AUTH
 Route::post('/login', [AuthController::class, 'login']);
@@ -21,32 +18,32 @@ Route::post('/login-logout', [AuthController::class, 'login_logout_all_device'])
 
 // Books
 Route::get('/books', [BookController::class, 'index']);
-Route::get('/books/{id}',[BookController::class, 'detail']);
+Route::get('/books/{id}', [BookController::class, 'detail']);
 
 // Categories
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{id}', [CategoryController::class, 'show']);
 
 // ROLES
-Route::get('/roles',[RoleController::class, 'index'])->middleware(['auth:sanctum']);
+Route::get('/roles', [RoleController::class, 'index'])->middleware(['auth:sanctum']);
 Route::middleware('auth:sanctum')->group(function () {
     // AUTH
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::get('/logout', [AuthController::class, 'logout']);
-    Route::get('/logout-all',[AuthController::class, 'logout_all_device']);
+    Route::get('/logout-all', [AuthController::class, 'logout_all_device']);
 
     // USERS
     Route::get('/user-count', [UserController::class, 'countUser'])->middleware(ThisForSuperUser::class);
     Route::get('/users/{id}', [UserController::class, 'show'])->middleware(ThisForSuperUser::class); // cek user detail
     Route::get('/users', [UserController::class, 'index'])->middleware(ThisForSuperUser::class); // ambil semua user dan superUser
-    Route::get('/users-user', [UserController::class,'user'])->middleware(ThisForSuperUser::class); // ambil semua data user
+    Route::get('/users-user', [UserController::class, 'user'])->middleware(ThisForSuperUser::class); // ambil semua data user
     Route::get('/users-superUser', [UserController::class, 'superUser'])->middleware(ThisForSuperUser::class); // ambil semua data super user
     Route::post('/users', [UserController::class, 'store'])->middleware(ThisForSuperUser::class); // buat user / superUser baru
     Route::delete('/users/{id}', [UserController::class, 'delete'])->middleware(ThisForSuperUser::class); // hapus user / superUser
 
     // BOOKS
     Route::get('books-count', [BookController::class, 'count'])->middleware(ThisForSuperUser::class);
-    Route::post('/books',[BookController::class, 'store'])->middleware(ThisForSuperUser::class);
+    Route::post('/books', [BookController::class, 'store'])->middleware(ThisForSuperUser::class);
     Route::put('/books/{id}', [BookController::class, 'update'])->middleware(ThisForSuperUser::class);
     Route::delete('/books/{id}', [BookController::class, 'drop'])->middleware(ThisForSuperUser::class);
 
@@ -75,13 +72,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch("/borrowings/{id}", [BorrowingController::class, 'returnBook'])->middleware(ThisForSuperUser::class); // catat pengembalian buku
 
     // TRANSACTION
-    Route::get('/transactions-count',[TransactionController::class, 'count'])->middleware(ThisForSuperUser::class);
-    Route::get('/transactions',[TransactionController::class, 'index'])->middleware(ThisForSuperUser::class);
+    Route::get('/transactions-count', [TransactionController::class, 'count'])->middleware(ThisForSuperUser::class);
+    Route::get('/transactions', [TransactionController::class, 'index'])->middleware(ThisForSuperUser::class);
     Route::get('/transactions/{id}', [TransactionController::class, 'show'])->middleware(ThisForSuperUser::class);
 
-    Route::get('/transactions-borrow',[TransactionController::class, 'trasnBorrow'])->middleware(ThisForSuperUser::class);
-    Route::get('/transactions-return',[TransactionController::class, 'transReturn'])->middleware(ThisForSuperUser::class);
-    Route::get('/transactions-fine',[TransactionController::class, 'transFine'])->middleware(ThisForSuperUser::class);
+    Route::get('/transactions-borrow', [TransactionController::class, 'trasnBorrow'])->middleware(ThisForSuperUser::class);
+    Route::get('/transactions-return', [TransactionController::class, 'transReturn'])->middleware(ThisForSuperUser::class);
+    Route::get('/transactions-fine', [TransactionController::class, 'transFine'])->middleware(ThisForSuperUser::class);
 
     Route::get('/transactions-borrow-data', [TransactionController::class, 'transBorrowDate'])->middleware(ThisForSuperUser::class);
     Route::get('/transactions-return-data', [TransactionController::class, 'transReturnDate'])->middleware(ThisForSuperUser::class);
