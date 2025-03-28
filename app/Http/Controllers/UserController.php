@@ -31,7 +31,7 @@ class UserController extends Controller
     public function superUser()
     {
         $userLoginID = Auth::user()->id;
-        $user = User::whereNot('id', $userLoginID)->where('role_id', 1)->get();
+        $user = User::whereNot('id', $userLoginID)->where('role_id', 1)->simplePaginate(20);
         return UserResource::collection($user);
     }
 
@@ -50,10 +50,7 @@ class UserController extends Controller
             'password' => 'required',
             'role_id' => 'required|exists:roles,id'
         ]);
-
-
         $result = User::create($request->all());
-
         return new UserResource($result);
     }
 
