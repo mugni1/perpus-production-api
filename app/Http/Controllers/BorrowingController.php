@@ -78,10 +78,10 @@ class BorrowingController extends Controller
         $request->validate([
             "user_id" => 'required|exists:users,id',
             "book_id" => 'required|exists:books,id',
-            "return_date" => 'required|date|after:today',
+            "return_date" => 'required|date|after:+2 days', //minimal 3 hari
             "daily_fine" => 'required|integer'
         ], [
-            'return_date.after' => 'Tanggal pengembalian buku tidak benar atau minimal harus lebih 1 hari dari hari ini.'
+            'return_date.after' => 'Tanggal pengembalian buku tidak benar atau minimal harus lebih 2 hari dari hari ini. Minimal 3 hari'
         ]);
 
         $requestData = $request->only([
