@@ -8,71 +8,79 @@ use App\Models\Borrowing;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Resources\BorrowingResource;
-use App\Http\Resources\BorrowResource;
 use Illuminate\Support\Facades\Auth;
 
 class BorrowingController extends Controller
 {
-    public function borrowCount(){
+    public function borrowCount()
+    {
         $count = Borrowing::where('status', 'dipinjam')->count();
         return response(['count' => $count]);
     }
-    public function returnCount(){
+    public function returnCount()
+    {
         $count = Borrowing::where('status', 'dikembalikan')->count();
         return response(['count' => $count]);
     }
-    public function lateCount(){
+    public function lateCount()
+    {
         $count = Borrowing::where('status', 'terlambat')->count();
         return response(['count' => $count]);
     }
 
-    public function index(){
+    public function index()
+    {
         $borrowings = Borrowing::all();
         return BorrowingResource::collection($borrowings);
     }
 
-    public function show($id){
+    public function show($id)
+    {
         $borrowing = Borrowing::findOrFail($id);
         return new BorrowingResource($borrowing);
     }
 
-    public function borrowList(){
+    public function borrowList()
+    {
         $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
             ->select('id', 'user_id', 'book_id', 'borrow_date', 'return_date', 'status', 'daily_fine')
             ->orderBy('created_at', 'DESC')
             ->where('status', 'dipinjam')
             ->simplePaginate(15);
-            return response(['data'=>$borrowings]);
+        return response(['data' => $borrowings]);
         // return BorrowResource::collection($borrowings);
     }
 
-    public function returnList(){
+    public function returnList()
+    {
         $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
-        ->select('id', 'user_id', 'book_id', 'borrow_date', 'actual_return_date', 'status', 'daily_fine')
-        ->orderBy('updated_at', 'DESC')
-        ->where('status','dikembalikan')
-        ->simplePaginate(15);
-        return response(['data'=>$borrowings]);
+            ->select('id', 'user_id', 'book_id', 'borrow_date', 'actual_return_date', 'status', 'daily_fine')
+            ->orderBy('updated_at', 'DESC')
+            ->where('status', 'dikembalikan')
+            ->simplePaginate(15);
+        return response(['data' => $borrowings]);
         // return BorrowingResource::collection($borrowings);
     }
 
-    public function lateList(){
+    public function lateList()
+    {
         $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
-        ->select('id', 'user_id', 'book_id','borrow_date','return_date', 'actual_return_date', 'status')
-        ->orderBy('updated_at', 'DESC')
-        ->where('status','terlambat')
-        ->simplePaginate(15);
-        return response(['data'=>$borrowings]);
+            ->select('id', 'user_id', 'book_id', 'borrow_date', 'return_date', 'actual_return_date', 'status')
+            ->orderBy('updated_at', 'DESC')
+            ->where('status', 'terlambat')
+            ->simplePaginate(15);
+        return response(['data' => $borrowings]);
         // return BorrowingResource::collection($borrowings);
     }
 
-    public function borrowBook(Request $request) {
+    public function borrowBook(Request $request)
+    {
         $request->validate([
             "user_id" => 'required|exists:users,id',
             "book_id" => 'required|exists:books,id',
             "return_date" => 'required|date|after:today',
             "daily_fine" => 'required|integer'
-        ],[
+        ], [
             'return_date.after' => 'Tanggal pengembalian buku tidak benar atau minimal harus lebih 1 hari dari hari ini.'
         ]);
 
@@ -89,7 +97,7 @@ class BorrowingController extends Controller
         $books = Book::findOrFail($requestData['book_id']);
 
         // cek buku apakah ada
-        if($books['stock'] != 0){
+        if ($books['stock'] != 0) {
             $result = Borrowing::create([
                 'user_id' => $requestData['user_id'],
                 'book_id' => $requestData['book_id'],
@@ -112,10 +120,11 @@ class BorrowingController extends Controller
             return new BorrowingResource($result);
         }
         // return jika stock buku kosong
-        return response(['message'=>'stock book is zero'], 400);
+        return response(['message' => 'stock book is zero'], 400);
     }
 
-    public function returnBook($borrowID){
+    public function returnBook($borrowID)
+    {
         $date_now = now();
         $borrowing = Borrowing::findOrFail($borrowID);
         $book = Book::findOrFail($borrowing['book_id']);
@@ -125,7 +134,7 @@ class BorrowingController extends Controller
         $delayDays = floor($return_date->diffInHours($date_now) / 24); //bulatkan dalam satu hari penuh
 
         // jika terdeteksi terlambat
-        if($delayDays > 0){
+        if ($delayDays > 0) {
             $book->update([
                 'stock' => $book['stock'] + 1,
             ]);
@@ -141,7 +150,7 @@ class BorrowingController extends Controller
                 'transaction_type' => 'denda',
                 'amount' => $totalFine,
             ]);
-            return response(['message'=>'Berhasil Mengembalikan buku, Harus membayar denda Rp' . $totalFine]);
+            return response(['message' => 'Berhasil Mengembalikan buku, Harus membayar denda Rp' . $totalFine]);
         }
         $book->update([
             'stock' => $book['stock'] + 1,
@@ -155,20 +164,26 @@ class BorrowingController extends Controller
             'transaction_type' => 'pengembalian',
             'amount' => 0,
         ]);
-        return response(['message'=>'Berhasil Mengembalikan buku tepat waktu, Mantap!']);
+        return response(['message' => 'Berhasil Mengembalikan buku tepat waktu, Mantap!']);
     }
 
     //////////// BUKU YG DI PINJAM USER //////////////////
-    public function borrowUser(){
+    public function borrowUser()
+    {
         $user = Auth::user()->id;
-        $borrowing = Borrowing::orderBy('id', 'DESC')->where('user_id',$user)->where('status', 'dipinjam')->get();
-        return BorrowingResource::collection($borrowing);
+        $borrowing = Borrowing::with('books:id,image,title,writer')->orderBy('created_at', 'DESC')->select('id', 'book_id', 'borrow_date', 'return_date', 'status', 'daily_fine')->where('user_id', $user)->where('status', 'dipinjam')->get();
+        return response(['data' => $borrowing]);
     }
     ////////// BUKU YG DI KEMBALIKAN USER ///////////////
-    public function returnUser(){
+    public function returnUser()
+    {
         $user = Auth::user()->id;
-        $borrowing = Borrowing::orderBy('id', 'DESC')->where('user_id', $user)->whereIn('status', ['dikembalikan', 'terlambat'])->get();
-        return BorrowingResource::collection($borrowing);
+        $borrowing = Borrowing::with(['books:id,image,title,writer'])
+            ->orderBy('updated_at', 'DESC')
+            ->select('id', 'book_id', 'borrow_date', 'return_date', 'actual_return_date', 'status', 'daily_fine')
+            ->where('user_id', $user)
+            ->whereIn('status', ['dikembalikan', 'terlambat'])
+            ->get();
+        return response(['data' => $borrowing]);
     }
-
 }

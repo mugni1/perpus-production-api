@@ -9,22 +9,30 @@ use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
-    public function index(){
+    public function index(Request $request)
+    {
+        $keyword = $request['keyword'];
         $books = Book::simplePaginate(20);
+        if ($keyword) {
+            $books = Book::where('title', 'LIKE', '%' . $keyword . '%')->simplePaginate(20);
+        }
         return BookResouce::collection($books);
     }
 
-    public function count(){
+    public function count()
+    {
         $results = Book::count();
-        return response(['count'=>$results]);
+        return response(['count' => $results]);
     }
 
-    public function detail($id){
+    public function detail($id)
+    {
         $results = Book::findOrFail($id);
         return new BookResouce($results);
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
             'title' => 'required|max:100|string',
             'image' => 'required|mimes:png,jpg,jpeg,jfif,avif,webp',
@@ -38,12 +46,12 @@ class BookController extends Controller
 
         $image_name = $request->file('image')->getClientOriginalName();
         $time_now = now()->translatedFormat('His');
-        $new_name_image = strtolower(str_replace(" ","_", $time_now . $image_name));
+        $new_name_image = strtolower(str_replace(" ", "_", $time_now . $image_name));
 
         $results = Book::create([
             'title' => $request['title'],
             'image' => $new_name_image,
-            'writer' =>$request['writer'],
+            'writer' => $request['writer'],
             'publisher' => $request['publisher'],
             'publication_date' => $request['publication_date'],
             'description' => $request['description'],
@@ -51,7 +59,7 @@ class BookController extends Controller
             'category_id' => $request['category_id'],
         ]);
 
-        if($results){
+        if ($results) {
             // simpan ke folder storage/image
             $request->file('image')->storeAs('images', $new_name_image);
         }
@@ -59,7 +67,8 @@ class BookController extends Controller
         return new BookResouce($results);
     }
 
-    public function update(Request $request,$id){
+    public function update(Request $request, $id)
+    {
         $request->validate([
             'title' => 'required|max:100|string',
             'image' => 'mimes:png,jpg,jpeg,jfif,avif,webp',
@@ -74,14 +83,14 @@ class BookController extends Controller
         $book = Book::findOrFail($id);
         $book_image = $book['image'];
 
-        if($request->file('image')){
-            $PathImage= 'images/' . $book_image;
-            if(Storage::disk('public')->exists($PathImage)){
-               Storage::disk('public')->delete($PathImage);
+        if ($request->file('image')) {
+            $PathImage = 'images/' . $book_image;
+            if (Storage::disk('public')->exists($PathImage)) {
+                Storage::disk('public')->delete($PathImage);
             }
             $image_name = $request->file('image')->getClientOriginalName();
             $time_now = now()->translatedFormat('His');
-            $book_image = strtolower(str_replace(" ","_", $time_now . $image_name));
+            $book_image = strtolower(str_replace(" ", "_", $time_now . $image_name));
             // simpan ke folder storage/image
             $request->file('image')->storeAs('images', $book_image);
         }
@@ -89,7 +98,7 @@ class BookController extends Controller
         $book->update([
             'title' => $request['title'],
             'image' => $book_image,
-            'writer' =>$request['writer'],
+            'writer' => $request['writer'],
             'publisher' => $request['publisher'],
             'publication_date' => $request['publication_date'],
             'description' => $request['description'],
@@ -97,19 +106,19 @@ class BookController extends Controller
             'category_id' => $request['category_id'],
         ]);
 
-        return response(['message'=>"seuccss update the book"]);
-
+        return response(['message' => "seuccss update the book"]);
     }
 
-    public function drop($id){
-         $book = Book::findOrFail($id);
-         $bookTitle = $book['title'];
-         $filePath = 'images/'.$book['image']; // ambil gambar dari database
-         if(Storage::disk('public')->exists($filePath)){
+    public function drop($id)
+    {
+        $book = Book::findOrFail($id);
+        $bookTitle = $book['title'];
+        $filePath = 'images/' . $book['image']; // ambil gambar dari database
+        if (Storage::disk('public')->exists($filePath)) {
             Storage::disk('public')->delete($filePath);
-         }
+        }
 
-         $book->delete();
-         return response()->json(['message' => 'Success delete books '. $bookTitle]);
+        $book->delete();
+        return response()->json(['message' => 'Success delete books ' . $bookTitle]);
     }
 }
