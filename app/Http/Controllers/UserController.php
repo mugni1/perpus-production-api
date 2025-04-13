@@ -22,9 +22,16 @@ class UserController extends Controller
         return response(['count' => $results]);
     }
 
-    public function user()
+    public function user(Request $request)
     {
-        $user = User::where('role_id', 2)->simplePaginate(1);
+        $keyword = $request->query("keyword");
+        if (!$keyword) {
+            $user = User::where('role_id', 2)->simplePaginate(20);
+            return UserResource::collection($user);
+        }
+        $user = User::where('role_id', 2)
+            ->where('full_name', 'like', '%' . $keyword . '%')
+            ->simplePaginate(20);
         return UserResource::collection($user);
     }
 
@@ -34,13 +41,13 @@ class UserController extends Controller
         $keyword = $request->query("keyword");
 
         if (!$keyword) {
-            $user = User::whereNot('id', $userLoginID)->where('role_id', 1)->simplePaginate(1);
+            $user = User::whereNot('id', $userLoginID)->where('role_id', 1)->simplePaginate(20);
             return UserResource::collection($user);
         }
         $user = User::whereNot('id', $userLoginID)
             ->where('role_id', 1)
             ->where('full_name', 'like', '%' . $keyword . '%')
-            ->simplePaginate(1);
+            ->simplePaginate(20);
         return UserResource::collection($user);
     }
 
