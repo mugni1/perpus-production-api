@@ -28,10 +28,20 @@ class UserController extends Controller
         return UserResource::collection($user);
     }
 
-    public function superUser()
+    public function superUser(Request $request)
     {
         $userLoginID = Auth::user()->id;
-        $user = User::whereNot('id', $userLoginID)->where('role_id', 1)->simplePaginate(20);
+        $key = $request->query("key");
+        if (!$key) {
+            $user = User::whereNot('id', $userLoginID)->where('role_id', 1)->simplePaginate(20);
+            return UserResource::collection($user);
+        }
+        $user = User::whereNot('id', $userLoginID)
+            ->where('role_id', 1)
+            ->where('full_name', 'like', '%' . $key . '%')
+            ->orWhere('email', 'like', '%' . $key . '%')
+            ->orWhere('username', 'like', '%' . $key . '%')
+            ->simplePaginate(20);
         return UserResource::collection($user);
     }
 
