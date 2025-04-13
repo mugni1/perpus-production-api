@@ -24,24 +24,23 @@ class UserController extends Controller
 
     public function user()
     {
-        $user = User::where('role_id', 2)->simplePaginate(20);
+        $user = User::where('role_id', 2)->simplePaginate(1);
         return UserResource::collection($user);
     }
 
     public function superUser(Request $request)
     {
         $userLoginID = Auth::user()->id;
-        $key = $request->query("key");
-        if (!$key) {
-            $user = User::whereNot('id', $userLoginID)->where('role_id', 1)->simplePaginate(20);
+        $keyword = $request->query("keyword");
+
+        if (!$keyword) {
+            $user = User::whereNot('id', $userLoginID)->where('role_id', 1)->simplePaginate(1);
             return UserResource::collection($user);
         }
         $user = User::whereNot('id', $userLoginID)
             ->where('role_id', 1)
-            ->where('full_name', 'like', '%' . $key . '%')
-            ->orWhere('email', 'like', '%' . $key . '%')
-            ->orWhere('username', 'like', '%' . $key . '%')
-            ->simplePaginate(20);
+            ->where('full_name', 'like', '%' . $keyword . '%')
+            ->simplePaginate(1);
         return UserResource::collection($user);
     }
 
