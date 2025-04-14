@@ -15,6 +15,11 @@ class UserController extends Controller
         $users = User::all();
         return UserResource::collection($users);
     }
+    public function getAll()
+    {
+        $user = User::select(['id', 'username'])->where('role_id', 2)->get();
+        return response(['data' => $user]);
+    }
 
     public function countUser()
     {
