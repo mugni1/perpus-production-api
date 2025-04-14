@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
@@ -53,11 +52,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/categories/{id}', [CategoryController::class, 'update'])->middleware(ThisForSuperUser::class);
     Route::delete('/categories/{id}', [CategoryController::class, 'drop'])->middleware(ThisForSuperUser::class);
 
-    // Borrowings
+    // BORROWING
+    // COUNT
     Route::get("/borrowings-borrow-count", [BorrowingController::class, 'borrowCount'])->middleware(ThisForSuperUser::class);
     Route::get("/borrowings-return-count", [BorrowingController::class, 'returnCount'])->middleware(ThisForSuperUser::class);
     Route::get("/borrowings-late-count", [BorrowingController::class, 'lateCount'])->middleware(ThisForSuperUser::class);
-
+    // UNTUK USER
     Route::get("/borrowings-borrow-user", [BorrowingController::class, 'borrowUser']); // list semua Buku yang di pinjam si anggota tertentu yang telah login dengan akunnya
     Route::get("/borrowings-return-user", [BorrowingController::class, 'returnUser']); // list semua Buku yang di kembalikan si anggota tertentu yang telah login dengan akunnya
 
@@ -67,19 +67,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get("/borrowings-borrow", [BorrowingController::class, 'borrowList'])->middleware((ThisForSuperUser::class)); // tampikan list buku yg di pinjam saja
     Route::get("/borrowings-return", [BorrowingController::class, 'returnList'])->middleware((ThisForSuperUser::class)); // tampikan list buku yg di kembalikan saja
     Route::get("/borrowings-late", [BorrowingController::class, 'lateList'])->middleware((ThisForSuperUser::class)); // tampikan list buku yg terlambat saja
-
+    // BUAT PEMINJAMAN DAN PEMGEMBALIAN
     Route::post("/borrowings", [BorrowingController::class, 'borrowBook'])->middleware(ThisForSuperUser::class); // catat pinjaman buku
     Route::patch("/borrowings/{id}", [BorrowingController::class, 'returnBook'])->middleware(ThisForSuperUser::class); // catat pengembalian buku
 
     // TRANSACTION
-    Route::get('/transactions-count', [TransactionController::class, 'count'])->middleware(ThisForSuperUser::class);
-    Route::get('/transactions', [TransactionController::class, 'index'])->middleware(ThisForSuperUser::class);
-    Route::get('/transactions/{id}', [TransactionController::class, 'show'])->middleware(ThisForSuperUser::class);
-
-    Route::get('/transactions-borrow', [TransactionController::class, 'trasnBorrow'])->middleware(ThisForSuperUser::class);
-    Route::get('/transactions-return', [TransactionController::class, 'transReturn'])->middleware(ThisForSuperUser::class);
-    Route::get('/transactions-fine', [TransactionController::class, 'transFine'])->middleware(ThisForSuperUser::class);
-
+    Route::get('/transactions-count', [TransactionController::class, 'count'])->middleware(ThisForSuperUser::class); // JUMLAH SEMUA TRANSAKSI
+    Route::get('/transactions/{id}', [TransactionController::class, 'show'])->middleware(ThisForSuperUser::class); // DETAIL
+    Route::get('/transactions', [TransactionController::class, 'index'])->middleware(ThisForSuperUser::class); // RIWAYAT SEMUA TRANSAKSI
+    Route::get('/transactions-borrow', [TransactionController::class, 'trasnBorrow'])->middleware(ThisForSuperUser::class); // RIWAYAT PINJAM
+    Route::get('/transactions-return', [TransactionController::class, 'transReturn'])->middleware(ThisForSuperUser::class); // RIWAYAT PENGEMBALIAN
+    Route::get('/transactions-fine', [TransactionController::class, 'transFine'])->middleware(ThisForSuperUser::class); // RIWAYAT DENDA
+    // TRANSAKSI DARI BULAN KE BULAN ||| UNTUK CHART
     Route::get('/transactions-borrow-data', [TransactionController::class, 'transBorrowDate'])->middleware(ThisForSuperUser::class);
     Route::get('/transactions-return-data', [TransactionController::class, 'transReturnDate'])->middleware(ThisForSuperUser::class);
     Route::get('/transactions-fine-data', [TransactionController::class, 'transFineDate'])->middleware(ThisForSuperUser::class);
