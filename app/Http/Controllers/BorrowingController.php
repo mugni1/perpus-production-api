@@ -40,14 +40,26 @@ class BorrowingController extends Controller
         return new BorrowingResource($borrowing);
     }
 
-    public function borrowList()
+    public function borrowList(Request $request)
     {
+        $keyword = $request['keyword'];
+
+        if (!$keyword) {
+            $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
+                ->select('id', 'user_id', 'book_id', 'borrow_date', 'return_date', 'status', 'daily_fine')
+                ->orderBy('created_at', 'DESC')
+                ->where('status', 'dipinjam')
+                ->simplePaginate(15);
+            return response(['data' => $borrowings]);
+        }
         $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
             ->select('id', 'user_id', 'book_id', 'borrow_date', 'return_date', 'status', 'daily_fine')
             ->orderBy('created_at', 'DESC')
             ->where('status', 'dipinjam')
+            ->where('id', 'like', '%' . $keyword . '%')
             ->simplePaginate(15);
         return response(['data' => $borrowings]);
+
         // return BorrowResource::collection($borrowings);
     }
 

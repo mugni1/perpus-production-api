@@ -12,9 +12,9 @@ class BookController extends Controller
     public function index(Request $request)
     {
         $keyword = $request['keyword'];
-        $books = Book::simplePaginate(20);
+        $books = Book::simplePaginate(1);
         if ($keyword) {
-            $books = Book::where('title', 'LIKE', '%' . $keyword . '%')->simplePaginate(20);
+            $books = Book::where('title', 'LIKE', '%' . $keyword . '%')->simplePaginate(2);
         }
         return BookResouce::collection($books);
     }
