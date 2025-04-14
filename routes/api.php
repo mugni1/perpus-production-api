@@ -36,7 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/{id}', [UserController::class, 'show'])->middleware(ThisForSuperUser::class); // cek user detail
     Route::get('/users', [UserController::class, 'index'])->middleware(ThisForSuperUser::class); // ambil semua user dan superUser
     Route::get('/users-user', [UserController::class, 'user'])->middleware(ThisForSuperUser::class); // ambil semua data user
-    Route::get('/users-superUser', [UserController::class, 'superUser'])->middleware(ThisForSuperUser::class); // ambil semua data super user
+    Route::get('/users-superUser', [UserController::class, 'superUser'])->middleware(ThisForSuperUser::class); // ambil semua data Admin
     Route::post('/users', [UserController::class, 'store'])->middleware(ThisForSuperUser::class); // buat user / superUser baru
     Route::delete('/users/{id}', [UserController::class, 'delete'])->middleware(ThisForSuperUser::class); // hapus user / superUser
 
@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/books', [BookController::class, 'store'])->middleware(ThisForSuperUser::class);
     Route::put('/books/{id}', [BookController::class, 'update'])->middleware(ThisForSuperUser::class);
     Route::delete('/books/{id}', [BookController::class, 'drop'])->middleware(ThisForSuperUser::class);
+    Route::get("/books-title-stock", [BookController::class, 'getAll'])->middleware(ThisForSuperUser::class); // untuk membuat order
 
     // CATEGORIES
     Route::get('/categories-count', [CategoryController::class, 'count'])->middleware(ThisForSuperUser::class);
@@ -53,11 +54,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/categories/{id}', [CategoryController::class, 'drop'])->middleware(ThisForSuperUser::class);
 
     // BORROWING
-    // COUNT
+    // count
     Route::get("/borrowings-borrow-count", [BorrowingController::class, 'borrowCount'])->middleware(ThisForSuperUser::class);
     Route::get("/borrowings-return-count", [BorrowingController::class, 'returnCount'])->middleware(ThisForSuperUser::class);
     Route::get("/borrowings-late-count", [BorrowingController::class, 'lateCount'])->middleware(ThisForSuperUser::class);
-    // UNTUK USER
+    // for user
     Route::get("/borrowings-borrow-user", [BorrowingController::class, 'borrowUser']); // list semua Buku yang di pinjam si anggota tertentu yang telah login dengan akunnya
     Route::get("/borrowings-return-user", [BorrowingController::class, 'returnUser']); // list semua Buku yang di kembalikan si anggota tertentu yang telah login dengan akunnya
 

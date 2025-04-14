@@ -12,11 +12,17 @@ class BookController extends Controller
     public function index(Request $request)
     {
         $keyword = $request['keyword'];
-        $books = Book::simplePaginate(1);
+        $books = Book::simplePaginate(20);
         if ($keyword) {
-            $books = Book::where('title', 'LIKE', '%' . $keyword . '%')->simplePaginate(2);
+            $books = Book::where('title', 'LIKE', '%' . $keyword . '%')->simplePaginate(20);
         }
         return BookResouce::collection($books);
+    }
+
+    public function getAll()
+    {
+        $books = Book::select(['id', 'title', 'stock'])->get();
+        return response(['data' => $books]);
     }
 
     public function count()
