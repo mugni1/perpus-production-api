@@ -63,23 +63,45 @@ class BorrowingController extends Controller
         // return BorrowResource::collection($borrowings);
     }
 
-    public function returnList()
+    public function returnList(Request $request)
     {
+        $keyword = $request['keyword'];
+
+        if (!$keyword) {
+            $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
+                ->select('id', 'user_id', 'book_id', 'borrow_date', 'actual_return_date', 'status', 'daily_fine')
+                ->orderBy('updated_at', 'DESC')
+                ->where('status', 'dikembalikan')
+                ->simplePaginate(15);
+            return response(['data' => $borrowings]);
+        }
         $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
             ->select('id', 'user_id', 'book_id', 'borrow_date', 'actual_return_date', 'status', 'daily_fine')
             ->orderBy('updated_at', 'DESC')
             ->where('status', 'dikembalikan')
+            ->where('id', 'like', '%' . $keyword . '%')
             ->simplePaginate(15);
         return response(['data' => $borrowings]);
         // return BorrowingResource::collection($borrowings);
     }
 
-    public function lateList()
+    public function lateList(Request $request)
     {
+        $keyword = $request['keyword'];
+
+        if (!$keyword) {
+            $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
+                ->select('id', 'user_id', 'book_id', 'borrow_date', 'return_date', 'actual_return_date', 'status')
+                ->orderBy('updated_at', 'DESC')
+                ->where('status', 'terlambat')
+                ->simplePaginate(15);
+            return response(['data' => $borrowings]);
+        }
         $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
             ->select('id', 'user_id', 'book_id', 'borrow_date', 'return_date', 'actual_return_date', 'status')
             ->orderBy('updated_at', 'DESC')
             ->where('status', 'terlambat')
+            ->where('id', 'like', '%' . $keyword . '%')
             ->simplePaginate(15);
         return response(['data' => $borrowings]);
         // return BorrowingResource::collection($borrowings);
