@@ -62,7 +62,6 @@ class TransactionController extends Controller
                     'borrowings.users:id,username'
                 ])
                 ->simplePaginate(15);
-            // return TransactionResource::collection($result);
             return response(['data' => $result]);
         }
         $result = Transaction::select('id', 'borrowing_id', 'transaction_type', 'amount', 'created_at')
@@ -75,7 +74,6 @@ class TransactionController extends Controller
             ])
             ->where('borrowing_id', 'like', '%' . $keyword . '%')
             ->simplePaginate(15);
-        // return TransactionResource::collection($result);
         return response(['data' => $result]);
     }
 
