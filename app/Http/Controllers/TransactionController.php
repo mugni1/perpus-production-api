@@ -25,7 +25,7 @@ class TransactionController extends Controller
                     'borrowings.books:id,title',
                     'borrowings.users:id,username'
                 ])
-                ->simplePaginate(15);
+                ->simplePaginate(30);
             return response(['data' => $result]);
         }
         $result = Transaction::select('id', 'borrowing_id', 'transaction_type', 'amount', 'created_at')
@@ -36,7 +36,7 @@ class TransactionController extends Controller
                 'borrowings.users:id,username'
             ])
             ->where('borrowing_id', 'like', '%' . $keyword . '%')
-            ->simplePaginate(15);
+            ->simplePaginate(30);
         // return TransactionResource::collection($result);
         return response(['data' => $result]);
     }
@@ -61,7 +61,7 @@ class TransactionController extends Controller
                     'borrowings.books:id,title',
                     'borrowings.users:id,username'
                 ])
-                ->simplePaginate(15);
+                ->simplePaginate(30);
             return response(['data' => $result]);
         }
         $result = Transaction::select('id', 'borrowing_id', 'transaction_type', 'amount', 'created_at')
@@ -73,7 +73,7 @@ class TransactionController extends Controller
                 'borrowings.users:id,username'
             ])
             ->where('borrowing_id', 'like', '%' . $keyword . '%')
-            ->simplePaginate(15);
+            ->simplePaginate(30);
         return response(['data' => $result]);
     }
 
@@ -89,7 +89,7 @@ class TransactionController extends Controller
                     'borrowings.books:id,title',
                     'borrowings.users:id,username'
                 ])
-                ->simplePaginate(15);
+                ->simplePaginate(30);
             // return TransactionResource::collection($result);
             return response(['data' => $result]);
         }
@@ -102,7 +102,7 @@ class TransactionController extends Controller
                 'borrowings.users:id,username'
             ])
             ->where('borrowing_id', 'like', '%' . $keyword . '%')
-            ->simplePaginate(15);
+            ->simplePaginate(30);
         // return TransactionResource::collection($result);
         return response(['data' => $result]);
     }
@@ -120,7 +120,7 @@ class TransactionController extends Controller
                     'borrowings.books:id,title',
                     'borrowings.users:id,username'
                 ])
-                ->simplePaginate(15);
+                ->simplePaginate(30);
             // return TransactionResource::collection($result);
             return response(['data' => $result]);
         }
@@ -133,7 +133,7 @@ class TransactionController extends Controller
                 'borrowings.users:id,username'
             ])
             ->where('borrowing_id', 'like', '%' . $keyword . '%')
-            ->simplePaginate(15);
+            ->simplePaginate(30);
         // return TransactionResource::collection($result);
         return response(['data' => $result]);
     }
