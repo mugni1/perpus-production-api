@@ -50,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // CATEGORIES
     Route::get('/categories-count', [CategoryController::class, 'count'])->middleware(ThisForSuperUser::class);
+    Route::get('/categories/{id}', [CategoryController::class, 'show'])->middleware(ThisForSuperUser::class);
     Route::post('/categories', [CategoryController::class, 'store'])->middleware(ThisForSuperUser::class);
     Route::put('/categories/{id}', [CategoryController::class, 'update'])->middleware(ThisForSuperUser::class);
     Route::delete('/categories/{id}', [CategoryController::class, 'drop'])->middleware(ThisForSuperUser::class);
