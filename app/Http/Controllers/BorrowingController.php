@@ -69,14 +69,14 @@ class BorrowingController extends Controller
 
         if (!$keyword) {
             $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
-                ->select('id', 'user_id', 'book_id', 'borrow_date', 'actual_return_date', 'status', 'daily_fine')
+                ->select('id', 'user_id', 'book_id', 'borrow_date', 'return_date', 'actual_return_date', 'status', 'daily_fine')
                 ->orderBy('updated_at', 'DESC')
                 ->where('status', 'dikembalikan')
                 ->simplePaginate(15);
             return response(['data' => $borrowings]);
         }
         $borrowings = Borrowing::with(['books:id,title', 'users:id,username'])
-            ->select('id', 'user_id', 'book_id', 'borrow_date', 'actual_return_date', 'status', 'daily_fine')
+            ->select('id', 'user_id', 'book_id', 'borrow_date', 'return_date', 'actual_return_date', 'status', 'daily_fine')
             ->orderBy('updated_at', 'DESC')
             ->where('status', 'dikembalikan')
             ->where('id', 'like', '%' . $keyword . '%')
