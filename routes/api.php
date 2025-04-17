@@ -72,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // BUAT PEMINJAMAN DAN PEMGEMBALIAN
     Route::post("/borrowings", [BorrowingController::class, 'borrowBook'])->middleware(ThisForSuperUser::class); // catat pinjaman buku
     Route::patch("/borrowings/{id}", [BorrowingController::class, 'returnBook'])->middleware(ThisForSuperUser::class); // catat pengembalian buku
+    Route::delete("/borrowings/{id}", [BorrowingController::class, 'deleteBorrowBook'])->middleware(ThisForSuperUser::class);
 
     // TRANSACTION
     Route::get('/transactions-count', [TransactionController::class, 'count'])->middleware(ThisForSuperUser::class); // JUMLAH SEMUA TRANSAKSI

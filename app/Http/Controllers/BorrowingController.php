@@ -118,19 +118,19 @@ class BorrowingController extends Controller
             'return_date.after' => 'Tanggal pengembalian buku tidak benar atau minimal harus lebih 2 hari dari hari ini. Minimal 3 hari'
         ]);
 
+        // data body
         $requestData = $request->only([
             "user_id",
             "book_id",
             "return_date",
             "daily_fine"
         ]);
-
         $borrow_date = now();
         $status = "dipinjam";
 
-        $books = Book::findOrFail($requestData['book_id']);
+        $books = Book::findOrFail($requestData['book_id']); // ambil data buku
 
-        // cek buku apakah ada
+        // cek buku apakah ada dan jika ada
         if ($books['stock'] != 0) {
             $result = Borrowing::create([
                 'user_id' => $requestData['user_id'],
@@ -154,7 +154,23 @@ class BorrowingController extends Controller
             return new BorrowingResource($result);
         }
         // return jika stock buku kosong
-        return response(['message' => 'stock book is zero'], 400);
+        return response(['message' => 'Stok Buku kosong'], 400);
+    }
+
+    public function deleteBorrowBook($borrowID)
+    {
+        $borrowing = Borrowing::findOrFail($borrowID);
+        if ($borrowing['status'] == "dipinjam") {
+            $book = Book::findOrFail($borrowing['book_id']);
+            $historyTransaction = Transaction::where('borrowing_id', $borrowID)->first();
+            $historyTransaction->delete();
+            $borrowing->delete();
+            $book->update([
+                'stock' => $book->stock + 1
+            ]);
+            return response(['message' => 'Sukses Menghapus peminjaman']);
+        }
+        return response(['message' => 'Gagal Menghapus peminjaman'], 500);
     }
 
     public function returnBook($borrowID)
