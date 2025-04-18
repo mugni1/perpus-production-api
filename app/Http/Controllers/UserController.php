@@ -6,6 +6,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -73,6 +74,27 @@ class UserController extends Controller
         ]);
         $result = User::create($request->all());
         return new UserResource($result);
+    }
+    public function update($id, Request $request)
+    {
+        $request->validate([
+            'full_name' => 'required|string|max:30',
+            'username' => 'required|string|max:10|unique:users,username,' . $id . ',id,deleted_at,NULL',
+            'email' => 'required|email|unique:users,email,' . $id . ',id,deleted_at,NULL',
+            'password' => 'required',
+            'role_id' => 'required|exists:roles,id'
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->update([
+            'full_name' => $request['full_name'],
+            'username' => $request['username'],
+            'email' => $request['email'],
+            'password' => Hash::make($request['password']),
+            'role_id' => $user['role_id'],
+        ]);
+
+        return response(['data' => "Berhasil mengedit user"]);
     }
 
     public function delete($id)

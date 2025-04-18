@@ -38,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users-user', [UserController::class, 'user'])->middleware(ThisForSuperUser::class); // ambil semua data user
     Route::get('/users-superUser', [UserController::class, 'superUser'])->middleware(ThisForSuperUser::class); // ambil semua data Admin
     Route::post('/users', [UserController::class, 'store'])->middleware(ThisForSuperUser::class); // buat user / superUser baru
+    Route::put('/users/{id}', [UserController::class, 'update'])->middleware(ThisForSuperUser::class); // buat user / superUser baru
     Route::delete('/users/{id}', [UserController::class, 'delete'])->middleware(ThisForSuperUser::class); // hapus user / superUser
     Route::get('/users-username', [UserController::class, 'getAll'])->middleware(ThisForSuperUser::class);
 
