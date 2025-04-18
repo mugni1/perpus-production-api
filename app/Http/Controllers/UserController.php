@@ -73,7 +73,10 @@ class UserController extends Controller
             'role_id' => 'required|exists:roles,id'
         ]);
         $result = User::create($request->all());
-        return new UserResource($result);
+        if ($result) {
+            return response(['data' => "Berhasil menambah user"], 201);
+        }
+        return response(['data' => "Gagal menambah user"], 403);
     }
     public function update($id, Request $request)
     {
@@ -82,7 +85,6 @@ class UserController extends Controller
             'username' => 'required|string|max:10|unique:users,username,' . $id . ',id,deleted_at,NULL',
             'email' => 'required|email|unique:users,email,' . $id . ',id,deleted_at,NULL',
             'password' => 'required',
-            'role_id' => 'required|exists:roles,id'
         ]);
 
         $user = User::findOrFail($id);
