@@ -84,10 +84,21 @@ class UserController extends Controller
             'full_name' => 'required|string|max:30',
             'username' => 'required|string|max:10|unique:users,username,' . $id . ',id,deleted_at,NULL',
             'email' => 'required|email|unique:users,email,' . $id . ',id,deleted_at,NULL',
-            'password' => 'required',
+            'password' => 'nullable',
         ]);
 
         $user = User::findOrFail($id);
+
+        if (!$request['password']) {
+            $user->update([
+                'full_name' => $request['full_name'],
+                'username' => $request['username'],
+                'email' => $request['email'],
+                'password' => $user['password'],
+                'role_id' => $user['role_id'],
+            ]);
+            return response(['data' => "Berhasil mengedit user tanpa mengubah pasword"]);
+        }
         $user->update([
             'full_name' => $request['full_name'],
             'username' => $request['username'],
@@ -95,8 +106,7 @@ class UserController extends Controller
             'password' => Hash::make($request['password']),
             'role_id' => $user['role_id'],
         ]);
-
-        return response(['data' => "Berhasil mengedit user"]);
+        return response(['data' => "Berhasil mengedit user dan mengubah password"]);
     }
 
     public function delete($id)
