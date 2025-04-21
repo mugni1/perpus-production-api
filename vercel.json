@@ -13,9 +13,10 @@
     "outputDirectory": "public",
     "env": {
         "APP_ENV": "production",
+        "APP_TIMEZONE": "Asia/Jakarta",
         "APP_DEBUG": "false",
         "APP_URL": "https://api-pustaka345.vercel.app",
-        "APP_KEY": "base64:TGaVaXwhWgjn9akhE4SCSIjGG/cQqvICUQ+PgLA3Bs0=",
+        "APP_KEY": "base64:3XUEwXF+4nmRp11UAC87Ipq7azuWh2S9/9QUe6zHDCE=",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
