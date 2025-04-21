@@ -8,11 +8,10 @@
     },
     "routes": [
         { "src": "/build/(.*)", "dest": "/public/build/$1" },
-        { "src": "/storage/(.*)", "dest": "/public/storage/$1" },
         { "src": "/(.*)", "dest": "/api/index.php" }
     ],
     "public": true,
-    "buildCommand": "vite build && [ -d public/storage ] || mkdir -p public/storage && cp -r -n storage/app/public/. public/storage/",
+    "buildCommand": "vite build",
     "outputDirectory": "public",
     "env": {
         "APP_ENV": "production",
