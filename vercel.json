@@ -11,7 +11,7 @@
         { "src": "/(.*)", "dest": "/api/index.php" }
     ],
     "public": true,
-    "buildCommand": "vite build && mkdir -p public/storage && cp -r storage/app/public/* public/storage/",
+    "buildCommand": "vite build && mkdir -p public/storage && [ -d storage/app/public ] && cp -r storage/app/public/* public/storage/ || echo 'No public files to copy'",
     "outputDirectory": "public",
     "env": {
         "APP_ENV": "production",
