@@ -77,7 +77,7 @@ class BookController extends Controller
     {
         $request->validate([
             'title' => 'required|max:100|string',
-            'image' => 'url',
+            'image' => 'url|nullable',
             'writer' => 'required|max:50|string',
             'publisher' => 'required|max:50|string',
             'publication_date' => 'date|required',
@@ -88,19 +88,9 @@ class BookController extends Controller
 
         $book = Book::findOrFail($id);
         $book_image = $book['image'];
-
-        // if ($request->file('image')) {
-        //     $PathImage = 'images/' . $book_image;
-        //     if (Storage::disk('public')->exists($PathImage)) {
-        //         Storage::disk('public')->delete($PathImage);
-        //     }
-        //     $image_name = $request->file('image')->getClientOriginalName();
-        //     $time_now = now()->translatedFormat('His');
-        //     $book_image = strtolower(str_replace(" ", "_", $time_now . $image_name));
-        //     // simpan ke folder storage/image
-        //     $request->file('image')->storeAs('images', $book_image);
-        // }
-
+        if ($request['image']) {
+            $book_image =  $request['image'];
+        }
         $book->update([
             'title' => $request['title'],
             'image' => $book_image,
