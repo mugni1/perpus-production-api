@@ -41,7 +41,7 @@ class BookController extends Controller
     {
         $request->validate([
             'title' => 'required|max:100|string',
-            'image' => 'required|mimes:png,jpg,jpeg,jfif,avif,webp',
+            'image' => 'required|url',
             'writer' => 'required|max:50|string',
             'publisher' => 'required|max:50|string',
             'publication_date' => 'date|required',
@@ -50,13 +50,13 @@ class BookController extends Controller
             'category_id' => 'required|exists:categories,id|integer',
         ]);
 
-        $image_name = $request->file('image')->getClientOriginalName();
-        $time_now = now()->translatedFormat('His');
-        $new_name_image = strtolower(str_replace(" ", "_", $time_now . $image_name));
+        // $image_name = $request->file('image')->getClientOriginalName();
+        // $time_now = now()->translatedFormat('His');
+        // $new_name_image = strtolower(str_replace(" ", "_", $time_now . $image_name));
 
         $results = Book::create([
             'title' => $request['title'],
-            'image' => $new_name_image,
+            'image' => $request['image'],
             'writer' => $request['writer'],
             'publisher' => $request['publisher'],
             'publication_date' => $request['publication_date'],
@@ -65,10 +65,10 @@ class BookController extends Controller
             'category_id' => $request['category_id'],
         ]);
 
-        if ($results) {
-            // simpan ke folder storage/image
-            $request->file('image')->storeAs('images', $new_name_image);
-        }
+        // if ($results) {
+        //     // simpan ke folder storage/image
+        //     $request->file('image')->storeAs('images', $new_name_image);
+        // }
 
         return new BookResouce($results);
     }
@@ -77,7 +77,7 @@ class BookController extends Controller
     {
         $request->validate([
             'title' => 'required|max:100|string',
-            'image' => 'mimes:png,jpg,jpeg,jfif,avif,webp',
+            'image' => 'url',
             'writer' => 'required|max:50|string',
             'publisher' => 'required|max:50|string',
             'publication_date' => 'date|required',
@@ -89,17 +89,17 @@ class BookController extends Controller
         $book = Book::findOrFail($id);
         $book_image = $book['image'];
 
-        if ($request->file('image')) {
-            $PathImage = 'images/' . $book_image;
-            if (Storage::disk('public')->exists($PathImage)) {
-                Storage::disk('public')->delete($PathImage);
-            }
-            $image_name = $request->file('image')->getClientOriginalName();
-            $time_now = now()->translatedFormat('His');
-            $book_image = strtolower(str_replace(" ", "_", $time_now . $image_name));
-            // simpan ke folder storage/image
-            $request->file('image')->storeAs('images', $book_image);
-        }
+        // if ($request->file('image')) {
+        //     $PathImage = 'images/' . $book_image;
+        //     if (Storage::disk('public')->exists($PathImage)) {
+        //         Storage::disk('public')->delete($PathImage);
+        //     }
+        //     $image_name = $request->file('image')->getClientOriginalName();
+        //     $time_now = now()->translatedFormat('His');
+        //     $book_image = strtolower(str_replace(" ", "_", $time_now . $image_name));
+        //     // simpan ke folder storage/image
+        //     $request->file('image')->storeAs('images', $book_image);
+        // }
 
         $book->update([
             'title' => $request['title'],
